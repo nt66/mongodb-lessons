@@ -2,6 +2,8 @@ mongodb-lessons
 =====
 mongodb修炼记
 
+点击[全文][df1]
+
 ## CRUD
 ### 插入
 单条插入:
@@ -93,6 +95,43 @@ db.person.ensureIndex({"name":1,"birthday":1}); //组合索引
 db.person.dropIndex("name_1"); //删除"name":1 索引
 db.person.dropIndex("name_1_birthday_1"); //删除组合索引
 ```
+### 主从复制
+#### 集群
+主从好处：数据备份、数据恢复、读写分离
+```sh
+主数据库 mongod --dbpath="mongodb1" --master
+副数据库 mongod --dhpath="mongodb2" --port 2222 --slave --source="mongodb1"
+```
+连接之后，副数据库每10s会从主数据库中同步数据
+
+#### 副本集
+无特定的主数据库，如果主数据库宕掉，会选出从数据库顶上
+```sh
+mongod --dbpath="" --port 2222 --replSet test/127.0.0.1:2222    //--replSet 集群设置
+mongod --dbpath="" --port 3333 --replSet test/127.0.0.1:3333
+//另一个数据库服务
+初始化副本集: mongo 127.0.0.1:2222/admin //随便选一台服务器进入admin
+db.runCommand({"repSetInitiate":{
+"_id":test
+"members":[
+ {
+  "_id":1,
+  "host":"127.0.0.1:2222"
+ },
+ {
+  "_id":2,
+  "host":"127.0.0.1:3333"
+ }
+]}})
+
+mongo 127.0.0.1:2222/admin 
+rs.addArb("...") //追加仲裁服务器
+
+mongo 127.0.0.1:2222/admin 
+rs.status() //察看服务器状态
+```
+
+[df1]: <http://blog.csdn.net/hechurui/article/category/5627917>
 
 
 
