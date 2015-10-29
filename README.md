@@ -73,6 +73,26 @@ db.person.remove({"name":"hlf"})   //删除hlf
 db.person.count({"age":20}) //age=20的数量
 db.person.distinct("age")   //age去重后的数组
 ```
+#### group
+#### mapreduce
+#### 游标
+
+### 索引
+```sh
+db.person.ensureIndex({"name":1})//name建立索引，1升序，-1降序
+db.person.find({"name":"hxc"+100000}).explain() //explain 是分析工具
+
+db.person.ensureIndex({"name":1},{"unique":true}) //重复的键不能插入
+db.person.ensureIndex({"name":1},{"unique":true})
+db.person.insert("name":"hlf","age":20)
+db.person.insert("name":"hlf","age":32)
+~~~error~~~
+
+db.person.ensureIndex({"name":1,"birthday":1}); //组合索引
+
+db.person.dropIndex("name_1"); //删除"name":1 索引
+db.person.dropIndex("name_1_birthday_1"); //删除组合索引
+```
 
 
 
