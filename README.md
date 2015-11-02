@@ -130,6 +130,36 @@ rs.addArb("...") //追加仲裁服务器
 mongo 127.0.0.1:2222/admin 
 rs.status() //察看服务器状态
 ```
+### 用户
+#### 添加用户
+```sh
+mongo 127.0.0.1：27017/admin
+db.addUser("admin","admin",false)//用户名、密码、用户是否只读
+用户验证登陆
+mongod --dbpath=D:\mongodb\data --auth
+```
+#### 数据备份
+mongodump --port 2222 -d test -o D:\mongodb\backup  /*backup是备份目录*/
+#### 数据恢复
+恢复数据
+mongorestore --port 2222 -d test --drop D:\mongodb\backup\test
+#### 分页
+mongoDB的分页查询是通过limit()一,skip(),sort()这三个函数组合进行分页查询
+
+方法一：
+```sha
+db.test.find().sort({"age":1}).limit(2); //第1页两条
+db.test.find().sort({"age":1}).skip(2).limit(2) //第2页两条
+```
+方法二：获取第一页的最后一条数据，然后排出前面的记录
+```sha
+var p1 = db.test.find().sort({"age":1}).limit(2);
+var latest = null;
+while(p1.hasNext()){
+  latest = p1.next();
+}
+db.test.find({"age":{"$gt":latest.age}}).sort({"age":1}).limit(2);
+```
 
 [df1]: <http://blog.csdn.net/hechurui/article/category/5627917>
 
